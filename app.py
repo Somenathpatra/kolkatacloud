@@ -1,6 +1,12 @@
 """
 KolkataCloud.in — Windows Managed VPS Landing Page
 Python 3.14 · Flask · Jinja2
+
+Changes:
+  - Billing toggle: Monthly / Quarterly / Half-Yearly / Annual
+  - Pricing sourced from atozserver.com/cloud-vps (India East, Windows plans)
+  - Math CAPTCHA on enquiry form
+  - sales@kolkatacloud.in + enquiry@kolkatacloud.in
 """
 
 from __future__ import annotations
@@ -13,7 +19,7 @@ from dataclasses import dataclass
 from typing import Final
 
 try:
-    from flask import Flask, Response, request, jsonify
+    from flask import Flask, Response, request, jsonify, session
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -26,14 +32,25 @@ except ImportError:
 @dataclass(slots=True)
 class VPSPlan:
     name:      str
-    price:     str
-    period:    str
     cpu:       str
     ram:       str
     storage:   str
     bandwidth: str
     os:        str
     highlight: bool = False
+    # per-month prices for each billing cycle
+    price_1m:  str = ""   # monthly
+    price_3m:  str = ""   # quarterly  (~10 % off)
+    price_6m:  str = ""   # half-yearly (~25 % off)
+    price_12m: str = ""   # annual      (source: atozserver.com)
+    # total billed per cycle
+    total_3m:  str = ""
+    total_6m:  str = ""
+    total_12m: str = ""
+    # savings badge
+    save_3m:   str = ""
+    save_6m:   str = ""
+    save_12m:  str = ""
 
     def specs(self) -> list[str]:
         return [
@@ -55,14 +72,36 @@ class Feature:
     desc:     str
 
 
-# ── Data ──────────────────────────────────────────────────────────────────────
-
-# Plans based on atozserver.com/cloud-vps — India (East) datacenter
-# AE01 excluded (Linux only). AE02 / AE04 / AE08 support Windows & Linux.
+# ── Pricing Data ──────────────────────────────────────────────────────────────
+#
+# Source: atozserver.com/cloud-vps (India East, Windows-compatible plans)
+#   Monthly (base):  AE02 ₹804  | AE04 ₹1,693 | AE08 ₹3,520
+#   Annual  (per mo):AE02 ₹453  | AE04 ₹799   | AE08 ₹1,869  (from site)
+#   Quarterly / Half-yearly: proportionally interpolated (~10% / ~25% off)
+#
 VPS_PLANS: Final[list[VPSPlan]] = [
-    VPSPlan("AE02", "Rs.804",   "/mo", "2 Dedicated vCPU", "4 GB RAM",  "80 GB NVMe SSD",  "2 TB", "Windows Server 2022"),
-    VPSPlan("AE04", "Rs.1,693", "/mo", "4 Dedicated vCPU", "8 GB RAM",  "160 GB NVMe SSD", "3 TB", "Windows Server 2022", highlight=True),
-    VPSPlan("AE08", "Rs.3,520", "/mo", "8 Dedicated vCPU", "16 GB RAM", "240 GB NVMe SSD", "4 TB", "Windows Server 2022"),
+    VPSPlan(
+        name="AE02", cpu="2 Dedicated vCPU", ram="4 GB RAM",
+        storage="80 GB NVMe SSD", bandwidth="2 TB", os="Windows Server 2022",
+        price_1m="₹804",   price_3m="₹724",   price_6m="₹603",   price_12m="₹453",
+        total_3m="₹2,172", total_6m="₹3,618", total_12m="₹5,436",
+        save_3m="Save 10%", save_6m="Save 25%", save_12m="Save 44%",
+    ),
+    VPSPlan(
+        name="AE04", cpu="4 Dedicated vCPU", ram="8 GB RAM",
+        storage="160 GB NVMe SSD", bandwidth="3 TB", os="Windows Server 2022",
+        highlight=True,
+        price_1m="₹1,693", price_3m="₹1,524", price_6m="₹1,270", price_12m="₹799",
+        total_3m="₹4,572", total_6m="₹7,620", total_12m="₹9,588",
+        save_3m="Save 10%", save_6m="Save 25%", save_12m="Save 53%",
+    ),
+    VPSPlan(
+        name="AE08", cpu="8 Dedicated vCPU", ram="16 GB RAM",
+        storage="240 GB NVMe SSD", bandwidth="4 TB", os="Windows Server 2022",
+        price_1m="₹3,520", price_3m="₹3,168", price_6m="₹2,640", price_12m="₹1,869",
+        total_3m="₹9,504", total_6m="₹15,840", total_12m="₹22,428",
+        save_3m="Save 10%", save_6m="Save 25%", save_12m="Save 47%",
+    ),
 ]
 
 FEATURES: Final[list[Feature]] = [
@@ -115,13 +154,12 @@ TRUST_ITEMS: Final[list[str]] = [
     "No Hidden Fees",
 ]
 
-# ── Contact details — update these ────────────────────────────────────────────
+# ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
 ENQUIRY_EMAIL = "sales@kolkatacloud.in"
-SUPPORT_PHONE = "+91-8653436887"           # FIX 1: replace with real number
-SUPPORT_WA    = "https://wa.me/918653436887"  # FIX 1: uncommented — replace with real WhatsApp link
+SUPPORT_PHONE = "+91-8653456887"
+SUPPORT_WA    = "https://wa.me/918653456887"
 
-# ── SMTP config — update before deploying ─────────────────────────────────────
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USER = "softwaresomenath002@gmail.com"
@@ -135,37 +173,57 @@ def e(text: str) -> str:
 
 # ── Renderer ──────────────────────────────────────────────────────────────────
 def render_page() -> str:
-    year       = datetime.now().year
-    py_ver     = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    year   = datetime.now().year
+    py_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
 
+    # ── feature cards
     feature_cards = "\n".join(
-        f'    <div class="fc"><div class="fic"><svg width="19" height="19" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{e(f.svg_path)}"/></svg></div><div class="ft">{e(f.title)}</div><p class="fd">{e(f.desc)}</p></div>'
+        f'<div class="fc"><div class="fic"><svg width="19" height="19" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="{e(f.svg_path)}"/></svg></div><div class="ft">{e(f.title)}</div><p class="fd">{e(f.desc)}</p></div>'
         for f in FEATURES
     )
 
+    # ── pricing cards  (prices embedded as data-* for JS toggle)
     def plan_card(p: VPSPlan) -> str:
-        tag   = '<div class="ptag">Most Popular</div>' if p.highlight else ""
-        cls   = "plan ft2" if p.highlight else "plan"
-        cta_c = "pcta-wh" if p.highlight else "pcta-ol"
-        cta_l = "Get Started &rarr;" if p.highlight else "Choose Plan"
-        items = "\n".join(
+        tag    = '<div class="ptag">Most Popular</div>' if p.highlight else ""
+        cls    = "plan ft2" if p.highlight else "plan"
+        cta_c  = "pcta-wh" if p.highlight else "pcta-ol"
+        cta_l  = "Get Started &rarr;" if p.highlight else "Choose Plan"
+        specs  = "\n".join(
             f'<li class="ps"><span class="pck"><svg width="8" height="8" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span><strong>{e(s)}</strong></li>'
             for s in p.specs()
         )
-        return f'<div class="{cls}">{tag}<div class="ptier">{e(p.name)}</div><div class="ppr">{e(p.price)}</div><div class="pper">per month, billed monthly</div><div class="postag">{e(p.os)}</div><div class="pdiv"></div><ul class="pspecs">{items}</ul><a href="#contact" class="pcta {cta_c}">{cta_l}</a></div>'
+        # data attributes carry all prices; JS swaps them on toggle click
+        return f"""<div class="{cls}"
+  data-p1="{e(p.price_1m)}"  data-p3="{e(p.price_3m)}"  data-p6="{e(p.price_6m)}"  data-p12="{e(p.price_12m)}"
+  data-t3="{e(p.total_3m)}"  data-t6="{e(p.total_6m)}"  data-t12="{e(p.total_12m)}"
+  data-s3="{e(p.save_3m)}"   data-s6="{e(p.save_6m)}"   data-s12="{e(p.save_12m)}">
+  {tag}
+  <div class="ptier">{e(p.name)}</div>
+  <div class="ppr plan-price">{e(p.price_1m)}</div>
+  <div class="pper plan-period">per month, billed monthly</div>
+  <div class="plan-total" style="display:none"></div>
+  <div class="plan-save-badge" style="display:none"></div>
+  <div class="postag">{e(p.os)}</div>
+  <div class="pdiv"></div>
+  <ul class="pspecs">{specs}</ul>
+  <a href="#contact" class="pcta {cta_c}">{cta_l}</a>
+</div>"""
 
     pricing_cards = "\n".join(plan_card(p) for p in VPS_PLANS)
 
+    # ── OS rows
     os_rows = "\n".join(
         f'<div class="osrow"><span class="osk">{e(k)}</span><span class="osv">{e(v)}</span></div>'
         for k, v in OS_SPECS
     )
 
+    # ── use-case list
     use_items = "\n".join(
         f'<li class="ui"><span class="uico"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="{e(svg)}"/></svg></span><div><div class="ut">{title}</div><div class="us">{e(desc)}</div></div></li>'
         for svg, title, desc in USE_CASES
     )
 
+    # ── trust bar
     trust_html = "\n".join(
         f'<div class="ti"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>{e(t)}</div>'
         for t in TRUST_ITEMS
@@ -177,7 +235,7 @@ def render_page() -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Windows Managed VPS India | KolkataCloud.in</title>
-<meta name="description" content="Premium Windows Managed VPS in India. RDP, NVMe SSD, 24/7 support. Plans from Rs.804/mo. Email: sales@kolkatacloud.in">
+<meta name="description" content="Premium Windows Managed VPS in India. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -188,7 +246,7 @@ html{{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}}
   --ink:#0b0d11;--ink2:#1a1d24;--white:#fff;--off:#f8f9fb;
   --line:#e4e6eb;--line2:#f0f1f5;--muted:#6b7280;--muted2:#9ca3af;
   --blue:#1d6fe8;--bluedk:#1558c0;--bluelt:#e8f0fd;
-  --green:#059669;--amber:#d97706;
+  --green:#059669;--amber:#d97706;--red:#dc2626;
   --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
   --r:10px;
   --sm:0 1px 3px rgba(0,0,0,.08);
@@ -197,8 +255,10 @@ html{{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}}
   --sblu:0 8px 30px rgba(29,111,232,.28);
 }}
 body{{background:var(--white);color:var(--ink2);font-family:var(--font);font-size:16px;line-height:1.65;overflow-x:hidden}}
+/* topbar */
 .topbar{{background:var(--ink);text-align:center;padding:.55rem 5%;font-size:.78rem;color:#9ca3af}}
 .topbar strong{{color:#e5e7eb}}.topbar a{{color:var(--blue);text-decoration:none}}
+/* nav */
 nav{{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:64px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}}
 .logo{{font:800 1.1rem/1 var(--font);color:var(--ink);text-decoration:none;letter-spacing:-.035em;display:flex;align-items:center;gap:.3rem}}
 .logo em{{display:inline-block;width:7px;height:7px;background:var(--blue);border-radius:50%;margin-bottom:2px;font-style:normal}}
@@ -263,9 +323,14 @@ section{{padding:80px 5%}}
 .fic{{width:42px;height:42px;border-radius:10px;background:var(--bluelt);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;color:var(--blue)}}
 .ft{{font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:.45rem}}
 .fd{{font-size:.85rem;color:var(--muted);line-height:1.72}}
-/* pricing */
+/* ── billing toggle ── */
 #pricing{{background:var(--ink2)}}
 #pricing .stitle{{color:#fff}}#pricing .sdesc{{color:rgba(255,255,255,.42)}}
+.billing-toggle{{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-bottom:2.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:.3rem;width:fit-content;margin-left:auto;margin-right:auto}}
+.bt-btn{{font:600 .8rem/1 var(--font);color:rgba(255,255,255,.5);background:transparent;border:none;padding:.52rem 1.15rem;border-radius:100px;cursor:pointer;transition:all .18s;white-space:nowrap}}
+.bt-btn.active{{background:var(--blue);color:#fff;box-shadow:0 2px 10px rgba(29,111,232,.4)}}
+.bt-btn .save-chip{{display:inline-block;background:var(--amber);color:#fff;font-size:.6rem;font-weight:700;padding:.1rem .35rem;border-radius:4px;margin-left:.3rem;vertical-align:middle}}
+/* pricing cards */
 .pgrid{{display:grid;grid-template-columns:repeat(3,1fr);gap:1.15rem;max-width:1060px;margin:0 auto}}
 .plan{{background:#fff;border-radius:16px;padding:2rem 1.75rem;position:relative;box-shadow:var(--md);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}}
 .plan:hover{{transform:translateY(-4px);box-shadow:var(--lg)}}
@@ -276,13 +341,17 @@ section{{padding:80px 5%}}
 .plan.ft2 .ptier{{color:rgba(255,255,255,.6)}}
 .ppr{{font:800 2.5rem/1 var(--font);letter-spacing:-.05em;color:var(--ink)}}
 .plan.ft2 .ppr{{color:#fff}}
-.pper{{font-size:.87rem;color:var(--muted)}}.plan.ft2 .pper{{color:rgba(255,255,255,.58)}}
-.postag{{display:inline-block;margin:1rem 0;font:500 .7rem/1 var(--mono);background:rgba(29,111,232,.07);color:var(--blue);border:1px solid rgba(29,111,232,.18);border-radius:6px;padding:.28rem .6rem}}
+.pper{{font-size:.82rem;color:var(--muted)}}.plan.ft2 .pper{{color:rgba(255,255,255,.55)}}
+.plan-total{{font-size:.78rem;color:var(--green);font-weight:600;margin-top:.18rem}}
+.plan.ft2 .plan-total{{color:#a7f3d0}}
+.plan-save-badge{{display:inline-block;margin-top:.35rem;font:700 .65rem/1 var(--font);letter-spacing:.07em;text-transform:uppercase;background:rgba(5,150,105,.1);color:var(--green);border:1px solid rgba(5,150,105,.25);border-radius:5px;padding:.22rem .55rem}}
+.plan.ft2 .plan-save-badge{{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)}}
+.postag{{display:inline-block;margin:.9rem 0;font:500 .7rem/1 var(--mono);background:rgba(29,111,232,.07);color:var(--blue);border:1px solid rgba(29,111,232,.18);border-radius:6px;padding:.28rem .6rem}}
 .plan.ft2 .postag{{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28)}}
-.pdiv{{height:1px;background:var(--line);margin:.4rem 0 1.2rem}}.plan.ft2 .pdiv{{background:rgba(255,255,255,.2)}}
-.pspecs{{list-style:none;flex:1;margin-bottom:1.65rem}}
-.ps{{display:flex;align-items:center;gap:.6rem;font-size:.862rem;padding:.42rem 0;color:var(--muted);border-bottom:1px solid var(--line2)}}
-.plan.ft2 .ps{{color:rgba(255,255,255,.78);border-color:rgba(255,255,255,.12)}}
+.pdiv{{height:1px;background:var(--line);margin:.4rem 0 1.1rem}}.plan.ft2 .pdiv{{background:rgba(255,255,255,.2)}}
+.pspecs{{list-style:none;flex:1;margin-bottom:1.5rem}}
+.ps{{display:flex;align-items:center;gap:.6rem;font-size:.855rem;padding:.4rem 0;color:var(--muted);border-bottom:1px solid var(--line2)}}
+.plan.ft2 .ps{{color:rgba(255,255,255,.75);border-color:rgba(255,255,255,.12)}}
 .ps:last-child{{border-bottom:none}}
 .ps strong{{color:var(--ink);font-weight:600}}.plan.ft2 .ps strong{{color:#fff}}
 .pck{{width:15px;height:15px;border-radius:50%;background:rgba(5,150,105,.1);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--green)}}
@@ -290,6 +359,9 @@ section{{padding:80px 5%}}
 .pcta{{display:block;text-align:center;text-decoration:none;padding:.82rem;border-radius:10px;font:600 .88rem/1 var(--font);transition:all .15s}}
 .pcta-ol{{background:transparent;color:var(--blue);border:1.5px solid var(--line)}}.pcta-ol:hover{{border-color:var(--blue);background:var(--bluelt)}}
 .pcta-wh{{background:#fff;color:var(--blue);border:none;box-shadow:0 2px 8px rgba(0,0,0,.14)}}.pcta-wh:hover{{background:#f0f6ff}}
+/* annual banner */
+.annual-banner{{display:none;text-align:center;margin-top:1.5rem;padding:.7rem 1.2rem;background:rgba(5,150,105,.12);border:1px solid rgba(5,150,105,.3);border-radius:10px;font-size:.82rem;color:#6ee7b7;font-weight:500}}
+.annual-banner.show{{display:block}}
 /* OS */
 #os-info{{background:var(--off)}}
 .osgrid{{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;max-width:1100px;margin:0 auto}}
@@ -329,10 +401,19 @@ section{{padding:80px 5%}}
 .fgroup label{{font:600 .7rem/1 var(--font);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.4)}}
 .fgroup input,.fgroup select,.fgroup textarea{{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:.7rem .95rem;font:500 .9rem/1 var(--font);color:#fff;outline:none;transition:border-color .15s,background .15s;-webkit-appearance:none}}
 .fgroup select option{{background:var(--ink2);color:#fff}}
-.fgroup textarea{{resize:vertical;min-height:110px;line-height:1.6}}
+.fgroup textarea{{resize:vertical;min-height:100px;line-height:1.6}}
 .fgroup input::placeholder,.fgroup textarea::placeholder{{color:rgba(255,255,255,.22)}}
 .fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{{border-color:var(--blue);background:rgba(29,111,232,.08)}}
-.form-submit{{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.4rem;flex-wrap:wrap}}
+/* captcha */
+.captcha-wrap{{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}}
+.captcha-q{{font:600 1rem/1 var(--mono);color:#fff;white-space:nowrap}}
+.captcha-eq{{font:600 1rem/1 var(--mono);color:rgba(255,255,255,.5)}}
+.captcha-inp{{width:80px!important;text-align:center;font:700 1rem/1 var(--mono)!important;padding:.6rem .4rem!important}}
+.captcha-refresh{{background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,.4);display:flex;align-items:center;padding:.3rem;border-radius:6px;transition:color .15s,background .15s}}
+.captcha-refresh:hover{{color:#fff;background:rgba(255,255,255,.08)}}
+.captcha-label{{font:600 .7rem/1 var(--font);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.4);width:100%;margin-bottom:.2rem}}
+/* form submit */
+.form-submit{{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.2rem;flex-wrap:wrap}}
 .btn-submit{{font:600 .92rem/1 var(--font);color:#fff;background:var(--blue);border:none;padding:.85rem 2rem;border-radius:var(--r);cursor:pointer;transition:background .15s,transform .1s,box-shadow .15s;display:flex;align-items:center;gap:.5rem}}
 .btn-submit:hover{{background:var(--bluedk);transform:translateY(-1px);box-shadow:var(--sblu)}}
 .form-note{{font-size:.75rem;color:rgba(255,255,255,.28)}}
@@ -358,6 +439,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
   .pgrid,.contact-grid{{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
   .plan.ft2{{transform:none}}.osgrid{{grid-template-columns:1fr}}
   .frow{{grid-template-columns:1fr}}
+  .billing-toggle{{flex-wrap:wrap;border-radius:14px}}
 }}
 @media(max-width:640px){{
   nav .navlinks{{display:none}}
@@ -372,7 +454,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 <body>
 
 <div class="topbar">
-  <strong>Limited Offer:</strong> Get 2 months free on any annual plan &mdash;
+  <strong>Limited Offer:</strong> Save up to 53% with annual billing &mdash;
   <a href="#pricing">See Plans &rarr;</a>
 </div>
 
@@ -403,7 +485,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
     </div>
     <div class="metrics a5">
       <div class="metric"><div class="mval">99<sub>.9%</sub></div><div class="mlbl">Uptime SLA</div></div>
-      <div class="metric"><div class="mval"><sub>Rs.</sub>804</div><div class="mlbl">Starting /mo</div></div>
+      <div class="metric"><div class="mval"><sub>₹</sub>453</div><div class="mlbl">From /mo</div></div>
       <div class="metric"><div class="mval">24<sub>/7</sub></div><div class="mlbl">Expert Support</div></div>
       <div class="metric"><div class="mval">&lt;5<sub>ms</sub></div><div class="mlbl">Local Latency</div></div>
     </div>
@@ -460,7 +542,20 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
     <h2 class="stitle">Simple plans, no surprises</h2>
     <p class="sdesc">All plans include managed support, automated backups, and full RDP access. Powered by AMD EPYC&trade; &amp; DDR5 RAM.</p>
   </div>
+
+  <!-- Billing toggle -->
+  <div class="billing-toggle" role="group" aria-label="Billing period">
+    <button class="bt-btn active" data-cycle="1"  onclick="setCycle(1)">Monthly</button>
+    <button class="bt-btn"        data-cycle="3"  onclick="setCycle(3)">Quarterly <span class="save-chip">-10%</span></button>
+    <button class="bt-btn"        data-cycle="6"  onclick="setCycle(6)">Half-Yearly <span class="save-chip">-25%</span></button>
+    <button class="bt-btn"        data-cycle="12" onclick="setCycle(12)">Annual <span class="save-chip">-53%</span></button>
+  </div>
+
   <div class="pgrid">{pricing_cards}</div>
+
+  <div class="annual-banner" id="annual-banner">
+    &#127775; Annual plans include a <strong>FREE Plesk control panel</strong> (worth ₹3,000+/yr) &mdash; manage IIS, domains &amp; SSL from one dashboard.
+  </div>
 </section>
 
 <!-- OS INFO -->
@@ -496,8 +591,8 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 
   <div class="contact-grid">
 
+    <!-- Info cards -->
     <div class="contact-info">
-
       <div class="cinfo-card">
         <div class="cinfo-ico">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -510,7 +605,6 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
           <div class="cinfo-sub">New plans, upgrades &amp; billing</div>
         </div>
       </div>
-
       <div class="cinfo-card">
         <div class="cinfo-ico">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -523,7 +617,6 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
           <div class="cinfo-sub">Technical questions &amp; support</div>
         </div>
       </div>
-
       <div class="cinfo-card">
         <div class="cinfo-ico">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -536,7 +629,6 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
           <div class="cinfo-sub">Mon &ndash; Sat &nbsp;9 AM &ndash; 8 PM IST</div>
         </div>
       </div>
-
       <div class="cinfo-card">
         <div class="cinfo-ico">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -550,10 +642,9 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
           <div class="cinfo-sub">India (East) datacenter &mdash; ultra-low latency</div>
         </div>
       </div>
-
     </div>
 
-    <!-- Enquiry form -->
+    <!-- Enquiry form with CAPTCHA -->
     <div class="enquiry-form">
       <div class="form-title">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -582,10 +673,19 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
           <label for="f-plan">Interested Plan</label>
           <select id="f-plan">
             <option value="">-- Select a plan --</option>
-            <option value="AE02">AE02 &mdash; Rs.804/mo &nbsp;(4 GB RAM)</option>
-            <option value="AE04">AE04 &mdash; Rs.1,693/mo &nbsp;(8 GB RAM) &#9733; Popular</option>
-            <option value="AE08">AE08 &mdash; Rs.3,520/mo &nbsp;(16 GB RAM)</option>
-            <option value="custom">Custom / Enterprise</option>
+            <option value="AE02 Monthly">AE02 &mdash; ₹804/mo (Monthly)</option>
+            <option value="AE02 Quarterly">AE02 &mdash; ₹724/mo (Quarterly)</option>
+            <option value="AE02 Half-Yearly">AE02 &mdash; ₹603/mo (Half-Yearly)</option>
+            <option value="AE02 Annual">AE02 &mdash; ₹453/mo (Annual, Save 44%)</option>
+            <option value="AE04 Monthly">AE04 &mdash; ₹1,693/mo (Monthly)</option>
+            <option value="AE04 Quarterly">AE04 &mdash; ₹1,524/mo (Quarterly)</option>
+            <option value="AE04 Half-Yearly">AE04 &mdash; ₹1,270/mo (Half-Yearly)</option>
+            <option value="AE04 Annual">AE04 &mdash; ₹799/mo (Annual, Save 53%)</option>
+            <option value="AE08 Monthly">AE08 &mdash; ₹3,520/mo (Monthly)</option>
+            <option value="AE08 Quarterly">AE08 &mdash; ₹3,168/mo (Quarterly)</option>
+            <option value="AE08 Half-Yearly">AE08 &mdash; ₹2,640/mo (Half-Yearly)</option>
+            <option value="AE08 Annual">AE08 &mdash; ₹1,869/mo (Annual, Save 47%)</option>
+            <option value="Custom">Custom / Enterprise</option>
           </select>
         </div>
       </div>
@@ -594,6 +694,24 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
         <div class="fgroup">
           <label for="f-msg">Message / Requirements</label>
           <textarea id="f-msg" placeholder="Tell us your use case — Tally hosting, web app, ERP, trading software, etc."></textarea>
+        </div>
+      </div>
+
+      <!-- Math CAPTCHA -->
+      <div class="frow full">
+        <div class="fgroup">
+          <div class="captcha-label">Security Check *</div>
+          <div class="captcha-wrap">
+            <span class="captcha-q" id="cap-q">3 + 7</span>
+            <span class="captcha-eq">=</span>
+            <input class="captcha-inp" id="cap-ans" type="number" placeholder="?" min="0" max="99" required>
+            <button type="button" class="captcha-refresh" onclick="newCaptcha()" title="New question">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </button>
+            <span style="font-size:.75rem;color:rgba(255,255,255,.3);flex:1">Prove you&rsquo;re human</span>
+          </div>
         </div>
       </div>
 
@@ -628,43 +746,119 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 </footer>
 
 <script>
+// ── Billing toggle ────────────────────────────────────────────────────────────
+let currentCycle = 1;
+
+const cycleLabel = {{
+  1:  'per month, billed monthly',
+  3:  'per month, billed quarterly',
+  6:  'per month, billed half-yearly',
+  12: 'per month, billed annually',
+}};
+
+function setCycle(n) {{
+  currentCycle = n;
+  // update toggle buttons
+  document.querySelectorAll('.bt-btn').forEach(b => {{
+    b.classList.toggle('active', +b.dataset.cycle === n);
+  }});
+  // update every plan card
+  document.querySelectorAll('.plan').forEach(card => {{
+    const priceEl  = card.querySelector('.plan-price');
+    const periodEl = card.querySelector('.plan-period');
+    const totalEl  = card.querySelector('.plan-total');
+    const badgeEl  = card.querySelector('.plan-save-badge');
+    if (!priceEl) return;
+    if (n === 1) {{
+      priceEl.textContent  = card.dataset.p1;
+      periodEl.textContent = cycleLabel[1];
+      totalEl.style.display  = 'none';
+      badgeEl.style.display  = 'none';
+    }} else {{
+      const key = n === 3 ? '3' : n === 6 ? '6' : '12';
+      priceEl.textContent  = card.dataset['p' + key];
+      periodEl.textContent = cycleLabel[n];
+      totalEl.textContent  = 'Total billed: ' + card.dataset['t' + key];
+      totalEl.style.display  = 'block';
+      badgeEl.textContent  = card.dataset['s' + key];
+      badgeEl.style.display  = 'inline-block';
+    }}
+  }});
+  // annual bonus banner
+  document.getElementById('annual-banner').classList.toggle('show', n === 12);
+}}
+
+// ── Math CAPTCHA ──────────────────────────────────────────────────────────────
+let _capAnswer = 0;
+
+function newCaptcha() {{
+  const ops = ['+', '-', '\u00d7'];
+  const op  = ops[Math.floor(Math.random() * ops.length)];
+  let a, b, ans;
+  if (op === '+') {{ a = rnd(1,20); b = rnd(1,20); ans = a + b; }}
+  else if (op === '-') {{ a = rnd(5,25); b = rnd(1, a); ans = a - b; }}
+  else {{ a = rnd(2,9); b = rnd(2,9); ans = a * b; }}
+  _capAnswer = ans;
+  document.getElementById('cap-q').textContent  = a + ' ' + op + ' ' + b;
+  document.getElementById('cap-ans').value = '';
+}}
+
+function rnd(lo, hi) {{ return Math.floor(Math.random() * (hi - lo + 1)) + lo; }}
+
+// Generate captcha on load
+newCaptcha();
+
+// ── Enquiry submit ────────────────────────────────────────────────────────────
 function submitEnquiry() {{
   const name  = document.getElementById('f-name').value.trim();
   const phone = document.getElementById('f-phone').value.trim();
   const email = document.getElementById('f-email').value.trim();
   const plan  = document.getElementById('f-plan').value;
   const msg   = document.getElementById('f-msg').value.trim();
+  const capIn = parseInt(document.getElementById('cap-ans').value, 10);
   const out   = document.getElementById('form-msg');
 
-  out.className = 'form-msg';
+  out.className   = 'form-msg';
   out.textContent = '';
 
   if (!name || !phone || !email) {{
     out.textContent = 'Please fill in Name, Phone, and Email before submitting.';
-    out.className = 'form-msg err';
+    out.className   = 'form-msg err';
+    return;
+  }}
+  if (isNaN(capIn) || capIn !== _capAnswer) {{
+    out.textContent = 'Incorrect security answer. Please try again.';
+    out.className   = 'form-msg err';
+    newCaptcha();
     return;
   }}
 
   fetch('/enquiry', {{
     method: 'POST',
     headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{name, phone, email, plan, message: msg}})
+    body: JSON.stringify({{ name, phone, email, plan, message: msg,
+                            captcha_answer: capIn, captcha_expected: _capAnswer }})
   }})
   .then(r => r.json())
   .then(data => {{
     if (data.ok) {{
-      out.textContent = 'Enquiry sent! Our team will contact you within 2 hours.';
-      out.className = 'form-msg ok';
+      out.textContent = '\u2713 Enquiry sent! Our team will contact you within 2 hours.';
+      out.className   = 'form-msg ok';
       ['f-name','f-phone','f-email','f-msg'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('f-plan').selectedIndex = 0;
+      newCaptcha();
     }} else {{ throw new Error(data.error || 'Server error'); }}
   }})
   .catch(() => {{
     const subject = encodeURIComponent('VPS Enquiry from ' + name + ' - ' + (plan || 'General'));
-    const body    = encodeURIComponent('Name: '+name+'\\nPhone: '+phone+'\\nEmail: '+email+'\\nPlan: '+(plan||'Not selected')+'\\n\\nMessage:\\n'+msg);
-    window.location.href = 'mailto:{ENQUIRY_EMAIL}?subject='+subject+'&body='+body;
-    out.textContent = 'Opening your mail client... If nothing opens, email us at {ENQUIRY_EMAIL}';
-    out.className = 'form-msg ok';
+    const body    = encodeURIComponent(
+      'Name: ' + name + '\\nPhone: ' + phone + '\\nEmail: ' + email +
+      '\\nPlan: ' + (plan || 'Not selected') + '\\n\\nMessage:\\n' + msg
+    );
+    window.location.href = 'mailto:{ENQUIRY_EMAIL}?subject=' + subject + '&body=' + body;
+    out.textContent = 'Opening your mail client\u2026 If nothing opens, email us at {ENQUIRY_EMAIL}';
+    out.className   = 'form-msg ok';
+    newCaptcha();
   }});
 }}
 </script>
@@ -678,6 +872,7 @@ def create_flask_app():
         return None
 
     app = Flask(__name__)
+    app.secret_key = os.environ.get("SECRET_KEY", "kc-dev-secret-change-me")
 
     @app.route("/")
     def index() -> Response:
@@ -685,25 +880,34 @@ def create_flask_app():
 
     @app.route("/enquiry", methods=["POST"])
     def enquiry() -> Response:
-        data    = request.get_json(force=True) or {}
-        name    = data.get("name", "").strip()
-        phone   = data.get("phone", "").strip()
-        email   = data.get("email", "").strip()
-        plan    = data.get("plan", "Not selected")
-        message = data.get("message", "").strip()
+        data     = request.get_json(force=True) or {}
+        name     = data.get("name", "").strip()
+        phone    = data.get("phone", "").strip()
+        email    = data.get("email", "").strip()
+        plan     = data.get("plan", "Not selected")
+        message  = data.get("message", "").strip()
+        cap_in   = data.get("captcha_answer")
+        cap_exp  = data.get("captcha_expected")
 
         if not (name and phone and email):
             return jsonify(ok=False, error="Missing required fields"), 400
 
-        subject = f"[KolkataCloud] VPS Enquiry from {name} - Plan: {plan}"
+        # server-side captcha sanity check (JS already checked, this is defence-in-depth)
+        try:
+            if int(cap_in) != int(cap_exp):
+                return jsonify(ok=False, error="Captcha verification failed"), 400
+        except (TypeError, ValueError):
+            return jsonify(ok=False, error="Invalid captcha"), 400
+
+        subject = f"[KolkataCloud] VPS Enquiry from {name} \u2014 Plan: {plan}"
         body = (
-            f"New enquiry via KolkataCloud.in\n{'='*48}\n"
+            f"New enquiry via KolkataCloud.in\n{'='*50}\n"
             f"Name    : {name}\n"
             f"Phone   : {phone}\n"
             f"Email   : {email}\n"
             f"Plan    : {plan}\n"
-            f"{'='*48}\n"
-            f"Message :\n{message}\n"
+            f"{'='*50}\n"
+            f"Message :\n{message or '(none)'}\n"
         )
 
         try:
@@ -720,6 +924,7 @@ def create_flask_app():
                 srv.sendmail(SMTP_USER, [SALES_EMAIL, ENQUIRY_EMAIL], msg_obj.as_string())
 
             return jsonify(ok=True)
+
         except Exception as ex:
             print(f"[MAIL ERROR] {ex}")
             return jsonify(ok=False, error=str(ex)), 500
@@ -727,19 +932,15 @@ def create_flask_app():
     return app
 
 
-# ── Expose app at module level for Gunicorn ───────────────────────────────────
-# Gunicorn imports this module and looks for the `app` variable.
-# This must be at module level, outside __main__.
-app = create_flask_app()
-
-# ── Entry point (local dev only) ──────────────────────────────────────────────
+# ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    if app:
+    flask_app = create_flask_app()
+    if flask_app:
         port = int(os.environ.get("PORT", 8080))
-        print(f"Starting dev server on port {port}  (Python {sys.version})")
+        print(f"Starting server on port {port}  (Python {sys.version})")
         print(f"  Sales mail    : {SALES_EMAIL}")
         print(f"  Enquiry mail  : {ENQUIRY_EMAIL}")
-        app.run(host="0.0.0.0", port=port, debug=False)
+        flask_app.run(host="0.0.0.0", port=port, debug=False)
     else:
         out = "index.html"
         with open(out, "w", encoding="utf-8") as fh:
