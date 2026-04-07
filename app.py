@@ -146,7 +146,7 @@ USE_CASES: Final[list[tuple[str, str, str]]] = [
 ]
 
 TRUST_ITEMS: Final[list[str]] = [
-    "India (Kolkata) Data Centre",
+    "India (East) Data Centre",
     "99.9% Uptime SLA",
     "Windows Server 2022",
     "AMD EPYC + DDR5 RAM",
@@ -157,8 +157,8 @@ TRUST_ITEMS: Final[list[str]] = [
 # ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
 ENQUIRY_EMAIL = "enquiry@kolkatacloud.in"
-SUPPORT_PHONE = "+91-8653436887"
-SUPPORT_WA    = "https://wa.me/918653436887"
+SUPPORT_PHONE = "+91-XXXXXXXXXX"
+SUPPORT_WA    = "https://wa.me/91XXXXXXXXXX"
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
