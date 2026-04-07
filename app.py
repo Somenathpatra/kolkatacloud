@@ -116,7 +116,7 @@ FEATURES: Final[list[Feature]] = [
     Feature("M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
             "24/7 Expert Support", "Kolkata-based engineers available around the clock via phone, live chat, and a dedicated support portal."),
     Feature("M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-            "India (East) Network", "Tier-III data centre in India (East) with redundant 1 Gbps uplinks, ensuring sub-5 ms latency for all domestic traffic."),
+            "Kolkata Network", "Tier-III data centre in Kolkata with 1 Gbps uplinks, ensuring sub-5 ms latency for all domestic traffic."),
 ]
 
 OS_SPECS: Final[list[tuple[str, str]]] = [
@@ -146,7 +146,7 @@ USE_CASES: Final[list[tuple[str, str, str]]] = [
 ]
 
 TRUST_ITEMS: Final[list[str]] = [
-    "India (East) Data Centre",
+    "Kolkata Data Centre",
     "99.9% Uptime SLA",
     "Windows Server 2022",
     "AMD EPYC + DDR5 RAM",
@@ -156,9 +156,9 @@ TRUST_ITEMS: Final[list[str]] = [
 
 # ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
-ENQUIRY_EMAIL = "sales@kolkatacloud.in"
-SUPPORT_PHONE = "+91-8653436887"
-SUPPORT_WA    = "https://wa.me/918653436887"
+ENQUIRY_EMAIL = "enquiry@kolkatacloud.in"
+SUPPORT_PHONE = "+91-XXXXXXXXXX"
+SUPPORT_WA    = "https://wa.me/91XXXXXXXXXX"
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -234,7 +234,7 @@ def render_page() -> str:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Windows Managed VPS India | KolkataCloud.in</title>
+<title>Windows Managed VPS Kolkata | KolkataCloud.in</title>
 <meta name="description" content="Premium Windows Managed VPS in India. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -475,10 +475,10 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-l">
-    <div class="hero-eyebrow a1"><span></span>Windows Managed VPS &mdash; India</div>
-    <h1 class="a2">Enterprise Cloud<br>Infrastructure<br><span class="hl">Built for India</span></h1>
+    <div class="hero-eyebrow a1"><span></span>Windows Managed VPS &mdash; Kolkata</div>
+    <h1 class="a2">Enterprise Cloud<br>Infrastructure<br><span class="hl">Built for Kolkata</span></h1>
     <p class="hero-p a3">Fully managed Windows Server VPS with RDP access, NVMe SSD storage,
-    and round-the-clock support &mdash; hosted in an Indian Tier-III data centre for ultra-low latency.</p>
+    and round-the-clock support &mdash; hosted in a Kolkata Tier-III data centre for ultra-low latency.</p>
     <div class="hero-btns a4">
       <a href="#pricing" class="btn-hero">View Plans &amp; Pricing</a>
       <a href="#contact" class="btn-ghost">Get in Touch</a>
@@ -639,7 +639,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
         <div>
           <div class="cinfo-label">Office</div>
           <div class="cinfo-value">Kolkata, West Bengal, India</div>
-          <div class="cinfo-sub">India (East) datacenter &mdash; ultra-low latency</div>
+          <div class="cinfo-sub">Kolkata datacenter &mdash; ultra-low latency</div>
         </div>
       </div>
     </div>
