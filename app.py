@@ -157,8 +157,8 @@ TRUST_ITEMS: Final[list[str]] = [
 # ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
 ENQUIRY_EMAIL = "enquiry@kolkatacloud.in"
-SUPPORT_PHONE = "+91-XXXXXXXXXX"
-SUPPORT_WA    = "https://wa.me/91XXXXXXXXXX"
+SUPPORT_PHONE = "+91-8653436887"
+SUPPORT_WA    = "https://wa.me/918653436887"
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
