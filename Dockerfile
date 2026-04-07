@@ -10,4 +10,5 @@ COPY app.py .
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["python", "app.py"]
+# Use gunicorn — production WSGI server required by Cloud Run
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app

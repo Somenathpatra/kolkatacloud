@@ -5,6 +5,7 @@ Python 3.14 · Flask · Jinja2
 
 from __future__ import annotations
 
+import os
 import sys
 from datetime import datetime
 from html import escape
@@ -117,8 +118,8 @@ TRUST_ITEMS: Final[list[str]] = [
 # ── Contact details — update these ────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
 ENQUIRY_EMAIL = "sales@kolkatacloud.in"
-SUPPORT_PHONE = "+91-XXXXXXXXXX"           # replace with real number
-#SUPPORT_WA    = "https://wa.me/91XXXXXXXXXX"  # replace with real WhatsApp link
+SUPPORT_PHONE = "+91-XXXXXXXXXX"           # FIX 1: replace with real number
+SUPPORT_WA    = "https://wa.me/91XXXXXXXXXX"  # FIX 1: uncommented — replace with real WhatsApp link
 
 # ── SMTP config — update before deploying ─────────────────────────────────────
 SMTP_HOST = "smtp.gmail.com"
@@ -726,14 +727,19 @@ def create_flask_app():
     return app
 
 
-# ── Entry point ───────────────────────────────────────────────────────────────
+# ── Expose app at module level for Gunicorn ───────────────────────────────────
+# Gunicorn imports this module and looks for the `app` variable.
+# This must be at module level, outside __main__.
+app = create_flask_app()
+
+# ── Entry point (local dev only) ──────────────────────────────────────────────
 if __name__ == "__main__":
-    flask_app = create_flask_app()
-    if flask_app:
-        print(f"Flask dev server  ->  http://127.0.0.1:5000  (Python {sys.version})")
+    if app:
+        port = int(os.environ.get("PORT", 8080))
+        print(f"Starting dev server on port {port}  (Python {sys.version})")
         print(f"  Sales mail    : {SALES_EMAIL}")
         print(f"  Enquiry mail  : {ENQUIRY_EMAIL}")
-        flask_app.run(debug=True)
+        app.run(host="0.0.0.0", port=port, debug=False)
     else:
         out = "index.html"
         with open(out, "w", encoding="utf-8") as fh:
