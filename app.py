@@ -118,8 +118,8 @@ TRUST_ITEMS: Final[list[str]] = [
 # ── Contact details — update these ────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
 ENQUIRY_EMAIL = "sales@kolkatacloud.in"
-SUPPORT_PHONE = "+91-8653436887"           # FIX 1: replace with real number
-SUPPORT_WA    = "https://wa.me/8653436887"  # FIX 1: uncommented — replace with real WhatsApp link
+#SUPPORT_PHONE = "+91-8653436887"           # FIX 1: replace with real number
+#SUPPORT_WA    = "https://wa.me/8653436887"  # FIX 1: uncommented — replace with real WhatsApp link
 
 # ── SMTP config — update before deploying ─────────────────────────────────────
 SMTP_HOST = "smtp.gmail.com"
