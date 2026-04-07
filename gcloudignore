@@ -1,0 +1,6 @@
+# .gcloudignore — only these files are uploaded to Cloud Build
+# Everything NOT listed here is excluded
+
+!app.py
+!Dockerfile
+!requirements.txt
