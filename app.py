@@ -156,9 +156,9 @@ TRUST_ITEMS: Final[list[str]] = [
 
 # ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
-ENQUIRY_EMAIL = "sales@kolkatacloud.in"
-SUPPORT_PHONE = "+91-8653456887"
-SUPPORT_WA    = "https://wa.me/918653456887"
+ENQUIRY_EMAIL = "enquiry@kolkatacloud.in"
+SUPPORT_PHONE = "+91-XXXXXXXXXX"
+SUPPORT_WA    = "https://wa.me/91XXXXXXXXXX"
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -932,15 +932,20 @@ def create_flask_app():
     return app
 
 
-# ── Entry point ───────────────────────────────────────────────────────────────
+# ── Module-level app for Gunicorn / uWSGI ────────────────────────────────────
+# Gunicorn expects:  gunicorn app:app
+# uWSGI expects:     uwsgi --module app --callable app
+app = create_flask_app()
+
+
+# ── Entry point (direct: python app.py) ──────────────────────────────────────
 if __name__ == "__main__":
-    flask_app = create_flask_app()
-    if flask_app:
+    if app:
         port = int(os.environ.get("PORT", 8080))
         print(f"Starting server on port {port}  (Python {sys.version})")
         print(f"  Sales mail    : {SALES_EMAIL}")
         print(f"  Enquiry mail  : {ENQUIRY_EMAIL}")
-        flask_app.run(host="0.0.0.0", port=port, debug=False)
+        app.run(host="0.0.0.0", port=port, debug=False)
     else:
         out = "index.html"
         with open(out, "w", encoding="utf-8") as fh:
