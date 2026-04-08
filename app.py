@@ -60,7 +60,7 @@ class VPSPlan:
             f"Bandwidth: {self.bandwidth}",
             "1 Gbps Network Speed",
             "Full RDP Admin Access",
-            "Managed Security & Backups",
+            "Managed Security & Backups*",
             "24/7 Priority Support",
         ]
 
@@ -112,7 +112,7 @@ FEATURES: Final[list[Feature]] = [
     Feature("M13 10V3L4 14h7v7l9-11h-7z",
             "NVMe SSD Storage", "Gen 4 NVMe SSDs delivering up to 7,000 MB/s sequential read speeds, 5x faster than conventional SATA SSDs."),
     Feature("M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12",
-            "Automated Backups", "Daily snapshots with 7-day rolling retention. Point-in-time recovery available for all plans with a single click."),
+            "Automated Backups*", "Daily snapshots with 7-day rolling retention. Point-in-time recovery available for all plans with a single click."),
     Feature("M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z",
             "24/7 Expert Support", "Kolkata-based engineers available around the clock via phone, live chat, and a dedicated support portal."),
     Feature("M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
@@ -151,12 +151,12 @@ TRUST_ITEMS: Final[list[str]] = [
     "Windows Server 2022",
     "AMD EPYC + DDR5 RAM",
     "1 Gbps Network Speed",
-    "No Hidden Fees",
+    "Eliminate Upfront Fees",
 ]
 
 # ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
-ENQUIRY_EMAIL = "sales@kolkatacloud.in"
+Support_EMAIL = "support@kolkatacloud.in"
 SUPPORT_PHONE = "+91-8653436887"
 SUPPORT_WA    = "https://wa.me/918653436887"
 
@@ -271,25 +271,25 @@ nav{{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-c
 .btn-nv{{font:600 .87rem/1 var(--font);color:#fff;background:var(--blue);border:none;padding:.55rem 1.3rem;border-radius:var(--r);text-decoration:none;transition:background .15s,transform .1s}}
 .btn-nv:hover{{background:var(--bluedk);transform:translateY(-1px)}}
 /* hero */
-.hero{{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;padding:88px 5% 72px;background:var(--ink);min-height:92vh;position:relative;overflow:hidden}}
-.hero::before{{content:'';position:absolute;top:-120px;right:-80px;width:600px;height:600px;background:radial-gradient(circle at 60% 40%,rgba(29,111,232,.22) 0%,transparent 65%);pointer-events:none}}
+.hero{{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;padding:88px 5% 72px;background:var(--white);min-height:92vh;position:relative;overflow:hidden}}
+.hero::before{{content:'';position:absolute;top:-120px;right:-80px;width:600px;height:600px;background:radial-gradient(circle at 60% 40%,rgba(29,111,232,.10) 0%,transparent 65%);pointer-events:none}}
 .hero-l{{position:relative;z-index:1}}
-.hero-eyebrow{{display:inline-flex;align-items:center;gap:.55rem;font:600 .7rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:1.5rem}}
+.hero-eyebrow{{display:inline-flex;align-items:center;gap:.55rem;font:600 .7rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem}}
 .hero-eyebrow span{{display:block;width:26px;height:1.5px;background:var(--blue)}}
-h1{{font-size:clamp(2.3rem,4vw,3.6rem);font-weight:800;line-height:1.07;letter-spacing:-.045em;color:#fff;margin-bottom:1.25rem}}
+h1{{font-size:clamp(2.3rem,4vw,3.6rem);font-weight:800;line-height:1.07;letter-spacing:-.045em;color:var(--ink);margin-bottom:1.25rem}}
 h1 .hl{{background:linear-gradient(90deg,#5aabff,#38d4f0);-webkit-background-clip:text;background-clip:text;color:transparent}}
-.hero-p{{font-size:1.02rem;color:rgba(255,255,255,.52);line-height:1.75;max-width:480px;margin-bottom:2.25rem}}
+.hero-p{{font-size:1.02rem;color:var(--muted);line-height:1.75;max-width:480px;margin-bottom:2.25rem}}
 .hero-btns{{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:3rem}}
 .btn-hero{{font:600 .93rem/1 var(--font);color:#fff;background:var(--blue);border:none;padding:.8rem 1.8rem;border-radius:var(--r);text-decoration:none;box-shadow:var(--sblu);transition:background .15s,transform .1s}}
 .btn-hero:hover{{background:var(--bluedk);transform:translateY(-2px)}}
-.btn-ghost{{font:500 .93rem/1 var(--font);color:rgba(255,255,255,.68);background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);padding:.8rem 1.8rem;border-radius:var(--r);text-decoration:none;transition:background .15s}}
-.btn-ghost:hover{{background:rgba(255,255,255,.13);color:#fff}}
-.metrics{{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);overflow:hidden}}
-.metric{{padding:1.2rem 1rem;border-right:1px solid rgba(255,255,255,.09);text-align:center}}
+.btn-ghost{{font:500 .93rem/1 var(--font);color:var(--muted);background:var(--off);border:1.5px solid var(--line);padding:.8rem 1.8rem;border-radius:var(--r);text-decoration:none;transition:background .15s}}
+.btn-ghost:hover{{background:var(--line2);color:var(--ink)}}
+.metrics{{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}}
+.metric{{padding:1.2rem 1rem;border-right:1px solid var(--line);text-align:center}}
 .metric:last-child{{border-right:none}}
-.mval{{font:800 1.75rem/1 var(--font);letter-spacing:-.045em;color:#fff;margin-bottom:.3rem}}
+.mval{{font:800 1.75rem/1 var(--font);letter-spacing:-.045em;color:var(--ink);margin-bottom:.3rem}}
 .mval sub{{font-size:.9rem;font-weight:600}}
-.mlbl{{font-size:.71rem;font-weight:500;color:rgba(255,255,255,.38);letter-spacing:.04em;text-transform:uppercase}}
+.mlbl{{font-size:.71rem;font-weight:500;color:var(--muted2);letter-spacing:.04em;text-transform:uppercase}}
 .hero-r{{position:relative;z-index:1}}
 /* terminal */
 .terminal{{background:#0d1117;border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;box-shadow:var(--lg);font-family:var(--mono)}}
@@ -459,7 +459,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 </div>
 
 <nav>
-  <a href="#" class="logo">KolkataCloud<em></em>in</a>
+  <a href="#" class="logo">KolkataCloud<em></em></a>
   <ul class="navlinks">
     <li><a href="#features">Features</a></li>
     <li><a href="#pricing">Pricing</a></li>
@@ -467,7 +467,6 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="navr">
-    <a href="mailto:{SALES_EMAIL}" class="btn-ol">Client Login</a>
     <a href="#pricing" class="btn-nv">Get Started</a>
   </div>
 </nav>
@@ -530,7 +529,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
   <div class="sh csh">
     <div class="slbl">Included in every plan</div>
     <h2 class="stitle">Everything you need, fully managed</h2>
-    <p class="sdesc">All enterprise features bundled at no extra cost &mdash; focus on your work, not your infrastructure.</p>
+    <p class="sdesc">All enterprise features bundled at no extra cost &mdash; Shift from Maintenance to Innovation.</p>
   </div>
   <div class="fgrid">{feature_cards}</div>
 </section>
@@ -539,8 +538,8 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 <section id="pricing">
   <div class="sh csh">
     <div class="slbl" style="color:rgba(255,255,255,.45)"><span style="background:rgba(255,255,255,.3);display:block;width:20px;height:1.5px"></span>Transparent pricing</div>
-    <h2 class="stitle">Simple plans, no surprises</h2>
-    <p class="sdesc">All plans include managed support, automated backups, and full RDP access. Powered by AMD EPYC&trade; &amp; DDR5 RAM.</p>
+    <h2 class="stitle">Simple plans for Small Businesses or Developers</h2>
+    <p class="sdesc">All plans include Managed Support, Full RDP (Remote Desktop Protocol), and a 1Gbps port.</p>
   </div>
 
   <!-- Billing toggle -->
@@ -612,8 +611,8 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
           </svg>
         </div>
         <div>
-          <div class="cinfo-label">General Enquiry</div>
-          <div class="cinfo-value"><a href="mailto:{ENQUIRY_EMAIL}">{ENQUIRY_EMAIL}</a></div>
+          <div class="cinfo-label">Support</div>
+          <div class="cinfo-value"><a href="mailto:{Support_EMAIL}">{Support_EMAIL}</a></div>
           <div class="cinfo-sub">Technical questions &amp; support</div>
         </div>
       </div>
@@ -733,16 +732,16 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 
 <!-- FOOTER -->
 <footer>
-  <a href="#" class="flogo">KolkataCloud<span>.in</span></a>
+  <a href="#" class="flogo">KolkataCloud</a>
   <nav class="flinks">
     <a href="#features">Features</a>
     <a href="#pricing">Pricing</a>
     <a href="#os-info">Windows VPS</a>
     <a href="mailto:{SALES_EMAIL}">Sales</a>
-    <a href="mailto:{ENQUIRY_EMAIL}">Enquiry</a>
+    <a href="mailto:{Support_EMAIL}">Enquiry</a>
   </nav>
-  <p>&copy; {year} KolkataCloud.in &mdash; All rights reserved.</p>
-  <div class="pybadge"><span class="pydot"></span>Python {py_ver}</div>
+  <p>&copy; {year} KolkataCloud &mdash; All rights reserved.</p>
+  
 </footer>
 
 <script>
@@ -855,8 +854,8 @@ function submitEnquiry() {{
       'Name: ' + name + '\\nPhone: ' + phone + '\\nEmail: ' + email +
       '\\nPlan: ' + (plan || 'Not selected') + '\\n\\nMessage:\\n' + msg
     );
-    window.location.href = 'mailto:{ENQUIRY_EMAIL}?subject=' + subject + '&body=' + body;
-    out.textContent = 'Opening your mail client\u2026 If nothing opens, email us at {ENQUIRY_EMAIL}';
+    window.location.href = 'mailto:{Support_EMAIL}?subject=' + subject + '&body=' + body;
+    out.textContent = 'Opening your mail client\u2026 If nothing opens, email us at {Support_EMAIL}';
     out.className   = 'form-msg ok';
     newCaptcha();
   }});
@@ -913,7 +912,7 @@ def create_flask_app():
         try:
             msg_obj = MIMEMultipart()
             msg_obj["From"]     = SMTP_USER
-            msg_obj["To"]       = f"{SALES_EMAIL}, {ENQUIRY_EMAIL}"
+            msg_obj["To"]       = f"{SALES_EMAIL}, {Support_EMAIL}"
             msg_obj["Subject"]  = subject
             msg_obj["Reply-To"] = email
             msg_obj.attach(MIMEText(body, "plain"))
@@ -921,7 +920,7 @@ def create_flask_app():
             with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as srv:
                 srv.starttls()
                 srv.login(SMTP_USER, SMTP_PASS)
-                srv.sendmail(SMTP_USER, [SALES_EMAIL, ENQUIRY_EMAIL], msg_obj.as_string())
+                srv.sendmail(SMTP_USER, [SALES_EMAIL, Support_EMAIL], msg_obj.as_string())
 
             return jsonify(ok=True)
 
@@ -944,7 +943,7 @@ if __name__ == "__main__":
         port = int(os.environ.get("PORT", 8080))
         print(f"Starting server on port {port}  (Python {sys.version})")
         print(f"  Sales mail    : {SALES_EMAIL}")
-        print(f"  Enquiry mail  : {ENQUIRY_EMAIL}")
+        print(f"  Enquiry mail  : {Support_EMAIL}")
         app.run(host="0.0.0.0", port=port, debug=False)
     else:
         out = "index.html"
