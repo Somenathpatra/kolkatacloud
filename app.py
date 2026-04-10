@@ -235,7 +235,7 @@ def render_page() -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Windows Managed VPS Kolkata | KolkataCloud.in</title>
-<meta name="description" content="Premium Windows Managed VPS in India. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
+<meta name="description" content="Premium Windows Managed VPS in Kolkata. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
