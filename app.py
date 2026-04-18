@@ -6,7 +6,7 @@ Changes:
   - Billing toggle: Monthly / Quarterly / Half-Yearly / Annual
   - Pricing sourced from atozserver.com/cloud-vps (India East, Windows plans)
   - Math CAPTCHA on enquiry form
-  - sales@kolkatacloud.in + enquiry@kolkatacloud.in
+  - sales@kolkatacloud.in + support@kolkatacloud.in
 """
 
 from __future__ import annotations
@@ -156,7 +156,7 @@ TRUST_ITEMS: Final[list[str]] = [
 
 # ── Contact / SMTP ────────────────────────────────────────────────────────────
 SALES_EMAIL   = "sales@kolkatacloud.in"
-Support_EMAIL = "support@kolkatacloud.in"
+SUPPORT_EMAIL = "support@kolkatacloud.in"
 SUPPORT_PHONE = "+91-8653436887"
 SUPPORT_WA    = "https://wa.me/918653436887"
 
@@ -235,7 +235,7 @@ def render_page() -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Windows Managed VPS Kolkata | KolkataCloud.in</title>
-<meta name="description" content="Premium Windows Managed VPS in Kolkata. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
+<meta name="description" content="Premium Windows Managed VPS in India. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -260,8 +260,8 @@ body{{background:var(--white);color:var(--ink2);font-family:var(--font);font-siz
 .topbar strong{{color:#e5e7eb}}.topbar a{{color:var(--blue);text-decoration:none}}
 /* nav */
 nav{{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:64px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}}
-.logo{{font:800 1.1rem/1 var(--font);color:var(--ink);text-decoration:none;letter-spacing:-.035em;display:flex;align-items:center;gap:.3rem}}
-.logo em{{display:inline-block;width:7px;height:7px;background:var(--blue);border-radius:50%;margin-bottom:2px;font-style:normal}}
+.logo{{font:800 1.1rem/1 var(--font);color:var(--ink);text-decoration:none;letter-spacing:-.035em;display:flex;align-items:center;gap:.45rem}}
+.logo-cloud{{flex-shrink:0;display:flex;align-items:center}}
 .navlinks{{display:flex;gap:.15rem;list-style:none}}
 .navlinks a{{color:var(--muted);text-decoration:none;font-weight:500;font-size:.87rem;padding:.42rem .85rem;border-radius:8px;transition:color .15s,background .15s}}
 .navlinks a:hover{{color:var(--ink);background:var(--line2)}}
@@ -422,8 +422,9 @@ section{{padding:80px 5%}}
 .form-msg.err{{background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.3);color:#fca5a5;display:block}}
 /* footer */
 footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.78rem}}
-.flogo{{font:800 1rem/1 var(--font);color:#fff;text-decoration:none;letter-spacing:-.03em}}
-.flogo span{{color:var(--blue)}}
+.flogo{{font:800 1rem/1 var(--font);color:#fff;text-decoration:none;letter-spacing:-.03em;display:flex;align-items:center;gap:.45rem}}
+.flogo-cloud{{flex-shrink:0;display:flex;align-items:center}}
+.cloudbadge{{display:flex;align-items:center;gap:.45rem;background:rgba(29,111,232,.12);border:1px solid rgba(29,111,232,.28);border-radius:6px;padding:.3rem .75rem;font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.55);white-space:nowrap}}
 .flinks{{display:flex;gap:1.5rem}}
 .flinks a{{color:rgba(255,255,255,.32);text-decoration:none;transition:color .15s}}.flinks a:hover{{color:rgba(255,255,255,.8)}}
 .pybadge{{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:.28rem .7rem;font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.4)}}
@@ -459,7 +460,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 </div>
 
 <nav>
-  <a href="#" class="logo">KolkataCloud<em></em></a>
+  <a href="#" class="logo"><span class="logo-cloud"><svg width="26" height="17" viewBox="0 0 26 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.8 8.23a7.6 7.6 0 00-14.3-2.58A5.4 5.4 0 005.4 16H20.2a4.8 4.8 0 00.6-9.77z" fill="#1d6fe8"/><path d="M20.8 8.23c-.18 0-.36.01-.54.03A5.4 5.4 0 0015.2 5.5a5.35 5.35 0 00-1.08.11 7.6 7.6 0 016.68 2.62z" fill="#5aabff" opacity=".6"/><ellipse cx="21.5" cy="12.5" rx="3.5" ry="3" fill="#1d6fe8" opacity=".35"/></svg></span>KolkataCloud</a>
   <ul class="navlinks">
     <li><a href="#features">Features</a></li>
     <li><a href="#pricing">Pricing</a></li>
@@ -612,7 +613,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
         </div>
         <div>
           <div class="cinfo-label">Support</div>
-          <div class="cinfo-value"><a href="mailto:{Support_EMAIL}">{Support_EMAIL}</a></div>
+          <div class="cinfo-value"><a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a></div>
           <div class="cinfo-sub">Technical questions &amp; support</div>
         </div>
       </div>
@@ -732,16 +733,19 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
 
 <!-- FOOTER -->
 <footer>
-  <a href="#" class="flogo">KolkataCloud</a>
+  <a href="#" class="flogo"><span class="flogo-cloud"><svg width="26" height="17" viewBox="0 0 26 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.8 8.23a7.6 7.6 0 00-14.3-2.58A5.4 5.4 0 005.4 16H20.2a4.8 4.8 0 00.6-9.77z" fill="#1d6fe8"/><path d="M20.8 8.23c-.18 0-.36.01-.54.03A5.4 5.4 0 0015.2 5.5a5.35 5.35 0 00-1.08.11 7.6 7.6 0 016.68 2.62z" fill="#5aabff" opacity=".6"/><ellipse cx="21.5" cy="12.5" rx="3.5" ry="3" fill="#1d6fe8" opacity=".35"/></svg></span>KolkataCloud</a>
   <nav class="flinks">
     <a href="#features">Features</a>
     <a href="#pricing">Pricing</a>
     <a href="#os-info">Windows VPS</a>
     <a href="mailto:{SALES_EMAIL}">Sales</a>
-    <a href="mailto:{Support_EMAIL}">Enquiry</a>
+    <a href="mailto:{SUPPORT_EMAIL}">Enquiry</a>
   </nav>
   <p>&copy; {year} KolkataCloud &mdash; All rights reserved.</p>
-  
+  <div class="cloudbadge">
+    <svg width="18" height="12" viewBox="0 0 26 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.8 8.23a7.6 7.6 0 00-14.3-2.58A5.4 5.4 0 005.4 16H20.2a4.8 4.8 0 00.6-9.77z" fill="#1d6fe8"/><path d="M20.8 8.23c-.18 0-.36.01-.54.03A5.4 5.4 0 0015.2 5.5a5.35 5.35 0 00-1.08.11 7.6 7.6 0 016.68 2.62z" fill="#5aabff" opacity=".7"/><ellipse cx="21.5" cy="12.5" rx="3.5" ry="3" fill="#1d6fe8" opacity=".4"/></svg>
+    Cloud&#8209;Powered
+  </div>
 </footer>
 
 <script>
@@ -854,8 +858,8 @@ function submitEnquiry() {{
       'Name: ' + name + '\\nPhone: ' + phone + '\\nEmail: ' + email +
       '\\nPlan: ' + (plan || 'Not selected') + '\\n\\nMessage:\\n' + msg
     );
-    window.location.href = 'mailto:{Support_EMAIL}?subject=' + subject + '&body=' + body;
-    out.textContent = 'Opening your mail client\u2026 If nothing opens, email us at {Support_EMAIL}';
+    window.location.href = 'mailto:{SUPPORT_EMAIL}?subject=' + subject + '&body=' + body;
+    out.textContent = 'Opening your mail client\u2026 If nothing opens, email us at {SUPPORT_EMAIL}';
     out.className   = 'form-msg ok';
     newCaptcha();
   }});
@@ -912,7 +916,7 @@ def create_flask_app():
         try:
             msg_obj = MIMEMultipart()
             msg_obj["From"]     = SMTP_USER
-            msg_obj["To"]       = f"{SALES_EMAIL}, {Support_EMAIL}"
+            msg_obj["To"]       = f"{SALES_EMAIL}, {SUPPORT_EMAIL}"
             msg_obj["Subject"]  = subject
             msg_obj["Reply-To"] = email
             msg_obj.attach(MIMEText(body, "plain"))
@@ -920,7 +924,7 @@ def create_flask_app():
             with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as srv:
                 srv.starttls()
                 srv.login(SMTP_USER, SMTP_PASS)
-                srv.sendmail(SMTP_USER, [SALES_EMAIL, Support_EMAIL], msg_obj.as_string())
+                srv.sendmail(SMTP_USER, [SALES_EMAIL, SUPPORT_EMAIL], msg_obj.as_string())
 
             return jsonify(ok=True)
 
@@ -943,7 +947,7 @@ if __name__ == "__main__":
         port = int(os.environ.get("PORT", 8080))
         print(f"Starting server on port {port}  (Python {sys.version})")
         print(f"  Sales mail    : {SALES_EMAIL}")
-        print(f"  Enquiry mail  : {Support_EMAIL}")
+        print(f"  Enquiry mail  : {SUPPORT_EMAIL}")
         app.run(host="0.0.0.0", port=port, debug=False)
     else:
         out = "index.html"
