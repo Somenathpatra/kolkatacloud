@@ -82,14 +82,14 @@ class Feature:
 VPS_PLANS: Final[list[VPSPlan]] = [
     VPSPlan(
         name="AE02", cpu="2 Dedicated vCPU", ram="4 GB RAM",
-        storage="80 GB NVMe SSD", bandwidth="2 TB", os="Windows Server 2022",
+        storage="80 GB NVMe SSD", bandwidth="2 TB", os="Windows Server 2025",
         price_1m="₹804",   price_3m="₹724",   price_6m="₹603",   price_12m="₹453",
         total_3m="₹2,172", total_6m="₹3,618", total_12m="₹5,436",
         save_3m="Save 10%", save_6m="Save 25%", save_12m="Save 44%",
     ),
     VPSPlan(
         name="AE04", cpu="4 Dedicated vCPU", ram="8 GB RAM",
-        storage="160 GB NVMe SSD", bandwidth="3 TB", os="Windows Server 2022",
+        storage="160 GB NVMe SSD", bandwidth="3 TB", os="Windows Server 2025",
         highlight=True,
         price_1m="₹1,693", price_3m="₹1,524", price_6m="₹1,270", price_12m="₹799",
         total_3m="₹4,572", total_6m="₹7,620", total_12m="₹9,588",
@@ -97,7 +97,7 @@ VPS_PLANS: Final[list[VPSPlan]] = [
     ),
     VPSPlan(
         name="AE08", cpu="8 Dedicated vCPU", ram="16 GB RAM",
-        storage="240 GB NVMe SSD", bandwidth="4 TB", os="Windows Server 2022",
+        storage="240 GB NVMe SSD", bandwidth="4 TB", os="Windows Server 2025",
         price_1m="₹3,520", price_3m="₹3,168", price_6m="₹2,640", price_12m="₹1,869",
         total_3m="₹9,504", total_6m="₹15,840", total_12m="₹22,428",
         save_3m="Save 10%", save_6m="Save 25%", save_12m="Save 47%",
@@ -148,7 +148,7 @@ USE_CASES: Final[list[tuple[str, str, str]]] = [
 TRUST_ITEMS: Final[list[str]] = [
     "Kolkata Data Centre",
     "99.9% Uptime SLA",
-    "Windows Server 2022",
+    "Windows Server 2025",
     "AMD EPYC + DDR5 RAM",
     "1 Gbps Network Speed",
     "Eliminate Upfront Fees",
@@ -234,8 +234,116 @@ def render_page() -> str:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Windows Managed VPS Kolkata | KolkataCloud.in</title>
-<meta name="description" content="Premium Windows Managed VPS in India. RDP, NVMe SSD, 24/7 support. Plans from ₹453/mo (annual). Email: sales@kolkatacloud.in">
+<!-- ═══ PRIMARY SEO ════════════════════════════════════════════ -->
+<title>Windows Managed VPS Kolkata | From ₹453/mo | KolkataCloud.in</title>
+<meta name="description"  content="Fully managed Windows VPS in Kolkata from ₹453/mo. Full RDP access, NVMe SSD, Windows Server 2025 &amp; 24/7 expert support. Ideal for Tally, ERP, ASP.NET &amp; SQL Server. Contact: sales@kolkatacloud.in">
+<meta name="keywords"     content="windows vps kolkata, managed vps hosting kolkata, cloud server kolkata, tally cloud kolkata, rdp server india, Windows Server 2025 vps india, managed hosting west bengal, asp.net hosting kolkata, mssql vps india, vps hosting kolkata">
+<meta name="author"       content="KolkataCloud.in">
+<meta name="robots"       content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical"     href="https://kolkatacloud.in/">
+
+<!-- ═══ OPEN GRAPH (WhatsApp / Facebook / LinkedIn preview) ════ -->
+<meta property="og:type"         content="website">
+<meta property="og:url"          content="https://kolkatacloud.in/">
+<meta property="og:title"        content="Windows Managed VPS Kolkata | KolkataCloud.in">
+<meta property="og:description"  content="Fully managed Windows VPS from ₹453/mo. RDP, NVMe SSD, Windows Server 2025, 24/7 Kolkata-based support. Tally, ERP &amp; ASP.NET ready.">
+<meta property="og:image"        content="https://kolkatacloud.in/og-image.png">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale"       content="en_IN">
+<meta property="og:site_name"    content="KolkataCloud.in">
+
+<!-- ═══ TWITTER CARD ══════════════════════════════════════════ -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Windows Managed VPS Kolkata | KolkataCloud.in">
+<meta name="twitter:description" content="Managed Windows VPS from ₹453/mo. RDP, NVMe SSD, 24/7 Kolkata support.">
+<meta name="twitter:image"       content="https://kolkatacloud.in/og-image.png">
+
+<!-- ═══ LOCAL BUSINESS SCHEMA ══════════════════════════════════ -->
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "KolkataCloud.in",
+  "description": "Fully managed Windows VPS hosting in Kolkata. RDP access, NVMe SSD, Windows Server 2025, 24/7 expert support.",
+  "url": "https://kolkatacloud.in",
+  "telephone": "{SUPPORT_PHONE}",
+  "email": "{SALES_EMAIL}",
+  "image": "https://kolkatacloud.in/og-image.png",
+  "priceRange": "₹₹",
+  "currenciesAccepted": "INR",
+  "paymentAccepted": "Cash, Credit Card, UPI, Net Banking",
+  "address": {{
+    "@type": "PostalAddress",
+    "addressLocality": "Kolkata",
+    "addressRegion": "West Bengal",
+    "addressCountry": "IN"
+  }},
+  "geo": {{
+    "@type": "GeoCoordinates",
+    "latitude": 22.5726,
+    "longitude": 88.3639
+  }},
+  "openingHoursSpecification": [{{
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "opens": "09:00",
+    "closes": "20:00"
+  }}],
+  "sameAs": [
+    "https://www.linkedin.com/company/kolkatacloud",
+    "https://www.facebook.com/kolkatacloud"
+  ],
+  "hasOfferCatalog": {{
+    "@type": "OfferCatalog",
+    "name": "Windows VPS Plans",
+    "itemListElement": [
+      {{"@type":"Offer","name":"AE02 Windows VPS","description":"2 vCPU, 4 GB RAM, 80 GB NVMe SSD","price":"453","priceCurrency":"INR"}},
+      {{"@type":"Offer","name":"AE04 Windows VPS","description":"4 vCPU, 8 GB RAM, 160 GB NVMe SSD","price":"799","priceCurrency":"INR"}},
+      {{"@type":"Offer","name":"AE08 Windows VPS","description":"8 vCPU, 16 GB RAM, 240 GB NVMe SSD","price":"1869","priceCurrency":"INR"}}
+    ]
+  }}
+}}
+</script>
+
+<!-- ═══ FAQ SCHEMA (shows expandable rich snippet in Google) ═══ -->
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{"@type":"Question","name":"What is the starting price for Windows VPS in Kolkata?",
+      "acceptedAnswer":{{"@type":"Answer","text":"KolkataCloud.in offers Windows VPS starting at ₹804/month (monthly) or as low as ₹453/month on annual billing. Plans include 2 vCPU, 4 GB RAM, 80 GB NVMe SSD and full RDP access."}}}},
+    {{"@type":"Question","name":"Do you provide managed Windows VPS with RDP access?",
+      "acceptedAnswer":{{"@type":"Answer","text":"Yes. All plans include full RDP admin access, managed security, automated daily backups, DDoS protection, and 24/7 support from our Kolkata-based team."}}}},
+    {{"@type":"Question","name":"Can I host Tally or ERP software on your cloud server?",
+      "acceptedAnswer":{{"@type":"Answer","text":"Absolutely. Our Windows Server 2025 VPS is fully compatible with Tally Prime, Tally ERP 9, and all major ERP solutions. Access Tally remotely from anywhere via RDP."}}}},
+    {{"@type":"Question","name":"How quickly will my Windows VPS be provisioned?",
+      "acceptedAnswer":{{"@type":"Answer","text":"Your Windows VPS is provisioned within 15 minutes of payment confirmation. Our team handles all initial setup — you just connect via RDP."}}}},
+    {{"@type":"Question","name":"Is KolkataCloud.in based in Kolkata?",
+      "acceptedAnswer":{{"@type":"Answer","text":"Yes, we are a Kolkata-based managed hosting company. Our support team is in Kolkata, West Bengal, India, available Monday to Saturday 9 AM – 8 PM IST."}}}}
+  ]
+}}
+</script>
+
+<!-- ═══ GOOGLE SEARCH CONSOLE VERIFICATION ══════════════════════
+     Replace content value after adding property in Search Console
+     https://search.google.com/search-console
+════════════════════════════════════════════════════════════════ -->
+<meta name="google-site-verification" content="google-site-verification=Eeli_50cKUOhef3vDj_M1ULvv2D38BgqBI2DEL_m3gc">
+
+<!-- ═══ GOOGLE ANALYTICS 4 ══════════════════════════════════════
+     Replace G-XXXXXXXXXX with your real GA4 Measurement ID
+     https://analytics.google.com
+════════════════════════════════════════════════════════════════ -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-538491676"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', 'G-538491676');
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -506,7 +614,7 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
         <div class="tl"><span class="cp">&gt;&gt;&gt;</span> <span class="cc">print</span><span class="cm">(</span><span class="cv">vps</span><span class="cm">.</span><span class="cc">info</span><span class="cm">())</span></div>
         <div class="tl"><span class="csc">VPSInfo</span><span class="cm">(</span></div>
         <div class="tl">&nbsp;&nbsp;<span class="ck">plan</span>    <span class="cm">=</span> <span class="cs">'AE04'</span><span class="cm">,</span></div>
-        <div class="tl">&nbsp;&nbsp;<span class="ck">os</span>      <span class="cm">=</span> <span class="cs">'Windows Server 2022'</span><span class="cm">,</span></div>
+        <div class="tl">&nbsp;&nbsp;<span class="ck">os</span>      <span class="cm">=</span> <span class="cs">'Windows Server 2025'</span><span class="cm">,</span></div>
         <div class="tl">&nbsp;&nbsp;<span class="ck">cpu</span>     <span class="cm">=</span> <span class="cs">'4 Dedicated vCPU'</span><span class="cm">,</span></div>
         <div class="tl">&nbsp;&nbsp;<span class="ck">ram</span>     <span class="cm">=</span> <span class="cs">'8 GB DDR5'</span><span class="cm">,</span></div>
         <div class="tl">&nbsp;&nbsp;<span class="ck">storage</span> <span class="cm">=</span> <span class="cs">'160 GB NVMe'</span><span class="cm">,</span></div>
@@ -568,14 +676,14 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
             <path d="M3 5.557L10.325 4.5V11.44H3V5.557zM11.12 4.388L21 3V11.38H11.12V4.388zM3 12.56H10.325V19.5L3 18.443V12.56zM11.12 12.62H21V21L11.12 19.612V12.62z"/>
           </svg>
         </div>
-        <div><div class="oscht">Windows Server 2022</div><div class="oschs">Standard Edition &mdash; 64-bit</div></div>
+        <div><div class="oscht">Windows Server 2025</div><div class="oschs">Standard Edition &mdash; 64-bit</div></div>
       </div>
       {os_rows}
     </div>
     <div class="osdet">
       <div class="slbl">Platform</div>
-      <h3>Why Windows Server 2022?</h3>
-      <p>Windows Server 2022 delivers secured-core server capabilities, hybrid cloud integration, and native container support &mdash; all within a full GUI environment. Our team handles every patch cycle so you never touch a WSUS console.</p>
+      <h3>Why Windows Server 2025?</h3>
+      <p>Windows Server 2025 delivers secured-core server capabilities, hybrid cloud integration, and native container support &mdash; all within a full GUI environment. Our team handles every patch cycle so you never touch a WSUS console.</p>
       <ul class="ulist">{use_items}</ul>
     </div>
   </div>
@@ -731,6 +839,57 @@ footer{{background:var(--ink);color:rgba(255,255,255,.32);padding:2rem 5%;displa
   </div>
 </section>
 
+<!-- ═══ FAQ SECTION — supports FAQ schema & keyword density ═══ -->
+<section id="faq" style="background:var(--off);padding:60px 5%">
+  <div style="max-width:820px;margin:0 auto">
+    <div class="slbl">Common Questions</div>
+    <h2 class="stitle" style="margin-bottom:1.8rem">Frequently Asked Questions</h2>
+    <div style="display:flex;flex-direction:column;gap:1rem">
+
+      <details style="background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:1.2rem 1.4rem">
+        <summary style="font:600 .97rem/1.4 var(--font);color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center">
+          What is the starting price for Windows VPS in Kolkata?
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p style="margin-top:.8rem;font-size:.9rem;color:var(--muted);line-height:1.72">KolkataCloud.in offers Windows VPS starting at <strong>₹804/month</strong> (monthly billing). With annual billing, plans start as low as <strong>₹453/month</strong> — saving you 44%.</p>
+      </details>
+
+      <details style="background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:1.2rem 1.4rem">
+        <summary style="font:600 .97rem/1.4 var(--font);color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center">
+          Do you provide managed Windows VPS with full RDP access?
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p style="margin-top:.8rem;font-size:.9rem;color:var(--muted);line-height:1.72">Yes. All our Windows VPS plans include <strong>full RDP (Remote Desktop Protocol) admin access</strong>, managed security, automated daily backups, DDoS protection, and 24/7 support from our Kolkata-based team.</p>
+      </details>
+
+      <details style="background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:1.2rem 1.4rem">
+        <summary style="font:600 .97rem/1.4 var(--font);color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center">
+          Can I host Tally or ERP software on your cloud VPS?
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p style="margin-top:.8rem;font-size:.9rem;color:var(--muted);line-height:1.72">Absolutely. Our Windows Server 2025 VPS is fully compatible with <strong>Tally Prime, Tally ERP 9</strong>, and all major ERP, accounting, and billing software. Access Tally remotely from anywhere via RDP — perfect for CA firms and accounting teams in Kolkata.</p>
+      </details>
+
+      <details style="background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:1.2rem 1.4rem">
+        <summary style="font:600 .97rem/1.4 var(--font);color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center">
+          How quickly will my Windows VPS be set up?
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p style="margin-top:.8rem;font-size:.9rem;color:var(--muted);line-height:1.72">Your Windows VPS is provisioned within <strong>15 minutes</strong> of payment confirmation. Our team handles all initial configuration — firewall, RDP, Windows updates — so you just connect and get started immediately.</p>
+      </details>
+
+      <details style="background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:1.2rem 1.4rem">
+        <summary style="font:600 .97rem/1.4 var(--font);color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center">
+          Is KolkataCloud.in based in Kolkata?
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-left:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p style="margin-top:.8rem;font-size:.9rem;color:var(--muted);line-height:1.72">Yes. We are a <strong>Kolkata-based managed hosting company</strong>. Our support team is located in Kolkata, West Bengal, India, and available Monday to Saturday 9 AM – 8 PM IST via phone, WhatsApp, and email at sales@kolkatacloud.in.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <a href="#" class="flogo"><span class="flogo-cloud"><svg width="26" height="17" viewBox="0 0 26 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.8 8.23a7.6 7.6 0 00-14.3-2.58A5.4 5.4 0 005.4 16H20.2a4.8 4.8 0 00.6-9.77z" fill="#1d6fe8"/><path d="M20.8 8.23c-.18 0-.36.01-.54.03A5.4 5.4 0 0015.2 5.5a5.35 5.35 0 00-1.08.11 7.6 7.6 0 016.68 2.62z" fill="#5aabff" opacity=".6"/><ellipse cx="21.5" cy="12.5" rx="3.5" ry="3" fill="#1d6fe8" opacity=".35"/></svg></span>KolkataCloud</a>
@@ -880,6 +1039,37 @@ def create_flask_app():
     @app.route("/")
     def index() -> Response:
         return Response(render_page(), mimetype="text/html")
+
+    @app.route("/sitemap.xml")
+    def sitemap() -> Response:
+        from datetime import date
+        today = date.today().isoformat()
+        xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://kolkatacloud.in/</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://kolkatacloud.in/#pricing</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kolkatacloud.in/#features</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kolkatacloud.in/#os-info</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kolkatacloud.in/#contact</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>"""
+        return Response(xml, mimetype="application/xml")
+
+    @app.route("/robots.txt")
+    def robots() -> Response:
+        return Response(
+            "User-agent: *\nAllow: /\nDisallow: /enquiry\nSitemap: https://kolkatacloud.in/sitemap.xml\n",
+            mimetype="text/plain"
+        )
+
+    @app.route("/og-image.png")
+    def og_image() -> Response:
+        svg = """<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0b0d11"/>
+  <text x="600" y="270" text-anchor="middle" font-family="sans-serif" font-size="80" font-weight="bold" fill="#ffffff">KolkataCloud<tspan fill="#1d6fe8">.in</tspan></text>
+  <text x="600" y="370" text-anchor="middle" font-family="sans-serif" font-size="34" fill="#6b7280">Managed Windows VPS · India · From ₹453/mo</text>
+  <text x="600" y="430" text-anchor="middle" font-family="sans-serif" font-size="26" fill="#1d6fe8">sales@kolkatacloud.in · +91-8653436887</text>
+</svg>"""
+        return Response(svg, mimetype="image/svg+xml")
 
     @app.route("/enquiry", methods=["POST"])
     def enquiry() -> Response:
